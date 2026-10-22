@@ -575,6 +575,26 @@ function openCloudAuthModal() {
     modal.style.display = 'flex';
   }
   clearAuthAlert();
+
+  const user = window.currentAuthenticatedUser;
+  const loggedInView = document.getElementById('authLoggedInView');
+  const loggedOutView = document.getElementById('authLoggedOutView');
+  const emailEl = document.getElementById('authLoggedInEmail');
+  const titleEl = document.getElementById('firebaseAuthTitle');
+  const subEl = document.getElementById('firebaseAuthSubtitle');
+
+  if (user) {
+    if (loggedInView) loggedInView.style.display = 'block';
+    if (loggedOutView) loggedOutView.style.display = 'none';
+    if (emailEl) emailEl.textContent = user.email || user.displayName || 'Authenticated User';
+    if (titleEl) titleEl.innerHTML = '<span class="nirv-wm-nirv">Nirv</span><span class="nirv-wm-track">Track</span> <span style="font-weight:600;color:var(--text-secondary);font-size:0.95rem;margin-left:4px;">Cloud Sync</span>';
+    if (subEl) subEl.textContent = 'Manage Supabase PostgreSQL cloud sync for your account.';
+  } else {
+    if (loggedInView) loggedInView.style.display = 'none';
+    if (loggedOutView) loggedOutView.style.display = 'block';
+    if (titleEl) titleEl.innerHTML = '<span class="nirv-wm-nirv">Nirv</span><span class="nirv-wm-track">Track</span> <span style="font-weight:600;color:var(--text-secondary);font-size:0.95rem;margin-left:4px;">Access</span>';
+    if (subEl) subEl.textContent = 'Sign in or create an account to access the dashboard.';
+  }
 }
 window.openCloudAuthModal = openCloudAuthModal;
 

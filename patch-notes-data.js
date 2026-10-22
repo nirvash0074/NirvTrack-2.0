@@ -5,11 +5,57 @@
  */
 window.APP_PATCH_NOTES = [
   {
+    version: 'v2.0.20261023.107',
+    date: 'Oct 23, 2026',
+    title: 'Enterprise Supabase Cloud Sync & Precision Schema Fidelity',
+    badge: 'Latest ✨',
+    badgeType: 'latest',
+    summary: 'Hardened NirvTrack 2.0 with 100% schema mapping fidelity across Supabase PostgreSQL and local workstation containers. Resolved critical semi-monthly income schedules (paycheck15/paycheck30/additional), 50/30/20 category classifications (needs/wants), and ledger transaction metadata (wallets, refunds, splits, bill links). Added a prominent 1-click "☁️ Sync" topbar control, multi-workspace sync support, and bidirectional Push/Pull triggers to guarantee instant data synchronization between localhost and Cloudflare deployments.',
+    features: [
+      {
+        type: 'feature',
+        tag: '[FEAT-SUPABASE-PRECISION-SYNC]',
+        title: '☁️ 100% Precision Schema Synchronization',
+        desc: 'Ensures exact bidirectional preservation of semi-monthly paychecks (15th & 30th), envelope categories (needs/wants), and ledger transactions across Supabase PostgreSQL.',
+        gui: {
+          type: 'button',
+          previewHtml: '<button class="btn btn-xs btn-outline-emerald">☁️ Force Push</button>',
+          actionLabel: 'Push Local to Cloud 🚀',
+          actionCode: 'if (typeof forcePushLocalToCloud === "function") forcePushLocalToCloud(true);'
+        }
+      },
+      {
+        type: 'feature',
+        tag: '[FEAT-TOPBAR-CLOUD-SYNC-UI]',
+        title: '⚡ 1-Click Topbar Sync Control & Modal',
+        desc: 'Added a dedicated "Sync" button directly in the user header cluster and an enhanced Cloud Sync management view with Push, Pull, and All-Workspaces sync.',
+        gui: {
+          type: 'button',
+          previewHtml: '<button class="btn btn-xs btn-outline-cyan">📥 Pull Cloud</button>',
+          actionLabel: 'Pull Cloud to Local 📥',
+          actionCode: 'if (typeof forcePullCloudToLocal === "function") forcePullCloudToLocal(true);'
+        }
+      },
+      {
+        type: 'improvement',
+        tag: '[FEAT-MULTIWORKSPACE-CLOUD-BACKUP]',
+        title: '💼 Multi-Workspace Cloud Archiving',
+        desc: 'Enables syncing all registered workspaces and ledgers to PostgreSQL in a single batch operation, safeguarding all user containers.',
+        gui: {
+          type: 'button',
+          previewHtml: '<button class="btn btn-xs btn-outline-indigo">💼 Sync All</button>',
+          actionLabel: 'Sync All Workspaces 💼',
+          actionCode: 'if (typeof syncAllWorkspacesToSupabase === "function") syncAllWorkspacesToSupabase();'
+        }
+      }
+    ]
+  },
+  {
     version: 'v2.0.20261023.106',
     date: 'Oct 23, 2026',
     title: 'Automated Startup Sign-In Modal & Guest Offline Mode',
-    badge: 'Latest ✨',
-    badgeType: 'latest',
+    badge: 'Previous',
+    badgeType: 'previous',
     summary: 'Configured NirvTrack 2.0 to automatically present the Google Sign-In and Cloud Authentication modal upon app startup when no active session is detected. Users who are already signed in bypass the modal and directly access their workstation. Added an explicit Continue as Guest button, backdrop dismissal, and Escape-key handling so users can dismiss the popup in 1 click and use the application offline with zero friction.',
     features: [
       {

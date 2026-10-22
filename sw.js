@@ -1,5 +1,5 @@
 // NirvTrack Progressive Web App Service Worker
-const CACHE_NAME = 'nirvtrack-v2.20261023.106';
+const CACHE_NAME = 'nirvtrack-v2.20261023.107';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

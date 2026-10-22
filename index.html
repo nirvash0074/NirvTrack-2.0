@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover, interactive-widget=resizes-content">
-  <title>NirvTrack v1.20261023.104 - Monthly Budget &amp; Expense Tracker</title>
+  <title>NirvTrack v2.0.20261023.107 - Monthly Budget &amp; Expense Tracker</title>
   <meta name="description" content="A modern, Power BI-inspired personal finance web application to track monthly expenses, allocate budgets by category, and monitor financial health.">
   <link rel="canonical" href="https://app.nirvtrack.com/">
   
@@ -49,7 +49,7 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20261023_v106_auth_popup">
+  <link rel="stylesheet" href="styles.css?v=20261023_v107_supabase_sync">
 </head>
 <body class="theme-aurora tier-style-executive" data-theme="aurora" data-tier="executive" data-user-tier="executive">
   <!-- App Container -->
@@ -74,7 +74,7 @@
           <div class="brand-title-row">
             <h2 class="nirv-official-wordmark"><span class="nirv-wm-nirv">Nirv</span><span class="nirv-wm-track">Track</span></h2>
             <span class="badge-pro brand-tier-badge badge-tier-free" id="brandTierBadge" role="button" tabindex="0" onclick="if (typeof openUpgradeModal === 'function') { openUpgradeModal('pro'); } else if (typeof showUpgradePrompt === 'function') { showUpgradePrompt('[FEAT-38]', 'Plan & Feature Tiers'); }">🌱 CORE</span>
-            <span class="brand-patch-badge" id="brandPatchBadge" style="display: none;" title="Latest Version (Click to view Patch Notes)" onclick="if (typeof openPatchNotesModal === 'function') openPatchNotesModal();">v1.20261023.104</span>
+            <span class="brand-patch-badge" id="brandPatchBadge" style="display: none;" title="Latest Version (Click to view Patch Notes)" onclick="if (typeof openPatchNotesModal === 'function') openPatchNotesModal();">v2.0.20261023.107</span>
           </div>
         </div>
         <button type="button" class="btn-sidebar-pin-toggle" id="btnSidebarPinToggle" title="Unpin &amp; Collapse Sidebar Left ( [ )" aria-label="Toggle Sidebar Pin" onclick="if (typeof toggleSidebarPin === 'function') toggleSidebarPin(event);">
@@ -238,7 +238,7 @@
           <!-- [FEAT-VERSION] App Version & Release Patch Notes Launcher -->
           <button type="button" id="btnSidebarPatchNotes" class="sidebar-version-pill" title="View Version & Release Patch Notes" onclick="if (typeof openPatchNotesModal === 'function') openPatchNotesModal();">
             <span class="version-bullet"></span>
-            <span class="version-name" id="sidebarVersionDisplay">v1.20261023.104</span>
+            <span class="version-name" id="sidebarVersionDisplay">v2.0.20261023.107</span>
             <span class="version-badge" id="sidebarVersionBadge">Patch Notes</span>
           </button>
 
@@ -439,13 +439,17 @@
         <!-- [FEAT-18 / FEAT-43] Firebase Cloud Authentication & Real-Time Role Engine -->
         <!-- [FIX-LOGOUT-VISIBILITY] Pinned to the topbar's right edge (outside the scrollable .topbar-right) so Log out / Admin badge can never overflow off-screen -->
           <div class="user-auth-cluster" id="userAuthCluster" style="display: none;">
-            <div class="user-profile-badge" id="adminProfileBadge" title="Account Profile & Firebase Role (Click for Command Center)" role="button" tabindex="0">
+            <div class="user-profile-badge" id="adminProfileBadge" title="Account Profile & Cloud Settings" role="button" tabindex="0" onclick="if (typeof openCloudAuthModal === 'function') openCloudAuthModal();">
               <span class="user-avatar" id="adminAvatar">👑</span>
               <div class="user-info">
                 <span class="user-name" id="adminUserEmail">User</span>
                 <span class="user-role" id="adminUserRole">Admin</span>
               </div>
             </div>
+            <button type="button" class="btn-topbar-cloud-sync" id="btnTopbarCloudSync" onclick="if (typeof forcePushLocalToCloud === 'function') forcePushLocalToCloud(true);" title="Sync all local data to Supabase PostgreSQL">
+              <span class="sync-icon">☁️</span>
+              <span class="sync-label">Sync</span>
+            </button>
             <button type="button" class="btn-logout" id="btnAdminLogout" title="Log out of NirvTrack" aria-label="Log out">
               <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
               <span class="logout-label">Log out</span>
@@ -8577,65 +8581,95 @@
 
       <div class="auth-alert" id="firebaseAuthAlert" style="display: none;"></div>
 
-      <div class="google-auth-wrap">
-        <button type="button" class="btn-google-auth" id="btnGoogleSignIn">
-          <svg viewBox="0 0 24 24" width="18" height="18">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span id="btnGoogleSignInText">Continue with Google</span>
-        </button>
-      </div>
-
-      <div class="auth-divider">
-        <span id="authDividerText">or sign in with email</span>
-      </div>
-
-      <form id="firebaseAuthForm">
-        <div class="form-group">
-          <label for="firebaseEmail">Email Address</label>
-          <div class="input-addon-wrap">
-            <span class="currency-addon">✉️</span>
-            <input type="email" id="firebaseEmail" class="form-control" placeholder="name@example.com" autocomplete="email" required>
-          </div>
+      <!-- View when Authenticated -->
+      <div id="authLoggedInView" style="display: none; text-align: center; padding: 6px 0 10px 0;">
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 2.2rem; margin-bottom: 4px;">☁️</div>
+          <h3 style="margin: 0 0 4px 0; font-size: 1.05rem; color: var(--text-primary);">Supabase PostgreSQL Connected</h3>
+          <p id="authLoggedInEmail" style="margin: 0; font-size: 0.88rem; color: #34d399; font-weight: 600;">user@example.com</p>
+          <span style="display: inline-block; margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.74rem; font-weight: 700;">🟢 Executive Tier Sync Active</span>
         </div>
 
-        <div class="form-group">
-          <label for="firebasePassword">Password</label>
-          <div class="input-addon-wrap">
-            <span class="currency-addon">🔒</span>
-            <input type="password" id="firebasePassword" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
-          </div>
-        </div>
-
-        <div class="form-group" id="firebaseConfirmGroup" style="display: none;">
-          <label for="firebaseConfirmPassword">Confirm Password</label>
-          <div class="input-addon-wrap">
-            <span class="currency-addon">🔒</span>
-            <input type="password" id="firebaseConfirmPassword" class="form-control" placeholder="Re-type your password" autocomplete="new-password">
-          </div>
-        </div>
-
-        <div class="auth-actions">
-          <button type="submit" class="btn btn-primary btn-block" id="btnFirebaseSubmit">
-            <span id="btnFirebaseSubmitText">Log In</span>
+        <div style="display: flex; flex-direction: column; gap: 9px; margin: 16px 0;">
+          <button type="button" class="btn btn-primary" onclick="forcePushLocalToCloud(true); closeCloudAuthModal();" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>🚀 Push Local Data to Cloud</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="forcePullCloudToLocal(true); closeCloudAuthModal();" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>📥 Pull Latest Data from Cloud</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="syncAllWorkspacesToSupabase(); closeCloudAuthModal();" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem;">
+            <span>💼 Sync All Workspaces</span>
           </button>
         </div>
 
-        <div class="auth-switch-link" id="firebaseSwitchWrap">
-          <span id="firebaseSwitchPrompt">First time here?</span>
-          <button type="button" class="btn-link" id="btnToggleFirebaseMode">Create Account</button>
+        <div style="margin-top: 14px; border-top: 1px solid var(--border-color); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <button type="button" class="btn-link" onclick="handleAuthLogout(); closeCloudAuthModal();" style="color: #f87171; font-size: 0.82rem; text-decoration: underline; background: none; border: none; cursor: pointer;">Sign Out</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeCloudAuthModal();">Done</button>
         </div>
-        <div style="text-align: center; margin-top: 10px;">
-          <button type="button" class="btn-link" id="btnContinueAsGuest" onclick="closeCloudAuthModal()" style="font-size: 0.82rem; color: var(--text-secondary); text-decoration: underline; background: none; border: none; cursor: pointer;">Continue as Guest (Offline Mode)</button>
+      </div>
+
+      <!-- View when Unauthenticated -->
+      <div id="authLoggedOutView">
+        <div class="google-auth-wrap">
+          <button type="button" class="btn-google-auth" id="btnGoogleSignIn">
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span id="btnGoogleSignInText">Continue with Google</span>
+          </button>
         </div>
 
-        <div class="auth-status-tip">
-          <span>⚡ Powered by Supabase Enterprise PostgreSQL &amp; Cloud Auth</span>
+        <div class="auth-divider">
+          <span id="authDividerText">or sign in with email</span>
         </div>
-      </form>
+
+        <form id="firebaseAuthForm">
+          <div class="form-group">
+            <label for="firebaseEmail">Email Address</label>
+            <div class="input-addon-wrap">
+              <span class="currency-addon">✉️</span>
+              <input type="email" id="firebaseEmail" class="form-control" placeholder="name@example.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="firebasePassword">Password</label>
+            <div class="input-addon-wrap">
+              <span class="currency-addon">🔒</span>
+              <input type="password" id="firebasePassword" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+            </div>
+          </div>
+
+          <div class="form-group" id="firebaseConfirmGroup" style="display: none;">
+            <label for="firebaseConfirmPassword">Confirm Password</label>
+            <div class="input-addon-wrap">
+              <span class="currency-addon">🔒</span>
+              <input type="password" id="firebaseConfirmPassword" class="form-control" placeholder="Re-type your password" autocomplete="new-password">
+            </div>
+          </div>
+
+          <div class="auth-actions">
+            <button type="submit" class="btn btn-primary btn-block" id="btnFirebaseSubmit">
+              <span id="btnFirebaseSubmitText">Log In</span>
+            </button>
+          </div>
+
+          <div class="auth-switch-link" id="firebaseSwitchWrap">
+            <span id="firebaseSwitchPrompt">First time here?</span>
+            <button type="button" class="btn-link" id="btnToggleFirebaseMode">Create Account</button>
+          </div>
+          <div style="text-align: center; margin-top: 10px;">
+            <button type="button" class="btn-link" id="btnContinueAsGuest" onclick="closeCloudAuthModal()" style="font-size: 0.82rem; color: var(--text-secondary); text-decoration: underline; background: none; border: none; cursor: pointer;">Continue as Guest (Offline Mode)</button>
+          </div>
+
+          <div class="auth-status-tip">
+            <span>⚡ Powered by Supabase Enterprise PostgreSQL &amp; Cloud Auth</span>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -9344,8 +9378,8 @@ GrabFood order for PHP 380.00 completed on 2026-10-16."></textarea>
 
   <!-- [FEAT-SUPABASE] Enterprise PostgreSQL Database & Google OAuth Engine -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-auth.js?v=20261023_v106_auth_popup"></script>
-  <script src="supabase-db.js?v=20261023_v106_auth_popup"></script>
+  <script src="supabase-auth.js?v=20261023_v107_supabase_sync"></script>
+  <script src="supabase-db.js?v=20261023_v107_supabase_sync"></script>
   <!--
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-auth.js"></script>
@@ -9356,12 +9390,12 @@ GrabFood order for PHP 380.00 completed on 2026-10-16."></textarea>
   <!-- <script src="https://www.paypal.com/sdk/js?client-id=BAAQOkcu3dYzrL__mSmk_CBX24JIpFz7QUU8O7Cqkt6Ub8Lq7IkdFbJVT97xctAQWLx5IVFX1AZvmMr5Nc&vault=true&intent=subscription&currency=USD" id="paypalSdkScript"></script> -->
 
   <!-- [FEAT-MODULAR-DOMAIN] Patch Notes & Version Registry Domain Store -->
-  <script src="patch-notes-data.js?v=20261023_v106_auth_popup"></script>
+  <script src="patch-notes-data.js?v=20261023_v107_supabase_sync"></script>
 
   <!-- App Core Script -->
-  <script src="app.js?v=20261023_v106_auth_popup"></script>
+  <script src="app.js?v=20261023_v107_supabase_sync"></script>
 
   <!-- [FEAT-MODULAR-DOMAIN] NirvTrack AI Copilot & Automation Engine -->
-  <script src="ai-copilot-engine.js?v=20261023_v106_auth_popup"></script>
+  <script src="ai-copilot-engine.js?v=20261023_v107_supabase_sync"></script>
 </body>
 </html>
