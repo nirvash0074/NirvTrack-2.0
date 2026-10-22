@@ -1,0 +1,78 @@
+{
+  "name": "NirvTrack - Expense & Wealth Tracker",
+  "short_name": "NirvTrack",
+  "description": "Executive financial workstation for monthly expense tracking, zero-based budgeting, and wealth analytics.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#100e24",
+  "theme_color": "#100e24",
+  "categories": [
+    "finance",
+    "productivity",
+    "business",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png?v=20261020_v20",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png?v=20261020_v20",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg?v=20261020_v20",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Expense",
+      "short_name": "Expense",
+      "description": "Quickly record a new transaction",
+      "url": "./index.html#action=new-expense",
+      "icons": [
+        {
+          "src": "icon-192.png?v=20261020_v20",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Spotlight Command Palette",
+      "short_name": "Search",
+      "description": "Open Spotlight Command Palette",
+      "url": "./index.html#action=cmd",
+      "icons": [
+        {
+          "src": "icon-192.png?v=20261020_v20",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Financial Workspaces",
+      "short_name": "Workspaces",
+      "description": "Switch or manage isolated workspace books",
+      "url": "./index.html#action=workspaces",
+      "icons": [
+        {
+          "src": "icon-192.png?v=20261020_v20",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

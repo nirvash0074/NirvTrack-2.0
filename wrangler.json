@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "budget-master",
+  "main": "_worker.js",
+  "compatibility_date": "2026-10-19",
+  "assets": {
+    "directory": "."
+  },
+  "previews": {}
+}

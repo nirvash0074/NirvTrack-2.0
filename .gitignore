@@ -1,0 +1,26 @@
+# Intermediates and temporary processing files (per AGENTS.md)
+.tmp/
+*.tmp
+
+# Credentials, tokens, and environment variables
+.env
+*.env
+credentials.json
+token.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

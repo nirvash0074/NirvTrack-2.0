@@ -1,0 +1,13 @@
+# Cloudflare Pages / Workers Security & Cache Headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Immutable static icons and assets
+/icon-192.png
+  Cache-Control: public, max-age=604800, immutable
+/icon-512.png
+  Cache-Control: public, max-age=604800, immutable
+/icon.svg
+  Cache-Control: public, max-age=604800, immutable

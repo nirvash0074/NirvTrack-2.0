@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="512" height="512" fill="none">
+  <defs>
+    <linearGradient id="sbAscentBg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="55%" stop-color="#100E24"/>
+      <stop offset="100%" stop-color="#080716"/>
+    </linearGradient>
+    <linearGradient id="sbBarIndigo" x1="0" y1="50" x2="0" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+    <linearGradient id="sbBarEmerald" x1="0" y1="50" x2="0" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#059669" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <linearGradient id="sbRibbonN" x1="12" y1="50" x2="52" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#sbAscentBg)" stroke="#818CF8" stroke-opacity="0.42" stroke-width="1.6"/>
+  <rect x="13" y="34" width="6" height="16" rx="3" fill="url(#sbBarIndigo)"/>
+  <rect x="23" y="26" width="6" height="24" rx="3" fill="url(#sbBarIndigo)"/>
+  <rect x="33" y="30" width="6" height="20" rx="3" fill="url(#sbBarEmerald)"/>
+  <rect x="43" y="16" width="6" height="34" rx="3" fill="url(#sbBarEmerald)"/>
+  <path d="M16 47 V21 L36 42 L46 16" stroke="#080716" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.65"/>
+  <path d="M16 47 V21 L36 42 L46 16" stroke="url(#sbRibbonN)" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M39 15 H47 V23" stroke="#10B981" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
