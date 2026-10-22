@@ -108,6 +108,20 @@ async function syncCurrentWorkspaceToSupabase() {
   try {
     const nowIso = new Date().toISOString();
 
+    // 0. Ensure user profile exists in public.users to satisfy foreign key constraints
+    try {
+      await client.from('users').upsert({
+        id: uid,
+        email: user.email || '',
+        display_name: user.displayName || user.email || 'User',
+        photo_url: user.photoURL || '',
+        tier: 'executive',
+        last_login_at: nowIso
+      }, { onConflict: 'id' });
+    } catch (uErr) {
+      console.warn('Notice ensuring user profile:', uErr);
+    }
+
     // 1. Upsert Workspace Record
     const wsName = (typeof workspaceRegistry !== 'undefined' && workspaceRegistry.workspaces)
       ? (workspaceRegistry.workspaces.find(w => w.id === activeWsId)?.name || 'Default Workspace')
@@ -526,7 +540,8 @@ async function syncOrHydrateOnLogin(user) {
       .eq('workspace_id', activeWsId)
       .limit(1);
 
-    const hasCloudData = (cloudExpenses && cloudExpenses.length > 0) || (cloudCategories && cloudCategories.length > 0);
+    const cloudHasExpenses = Array.isArray(cloudExpenses) && cloudExpenses.length > 0;
+    const hasCloudData = cloudHasExpenses || (cloudCategories && cloudCategories.length > 0);
 
     const localHasExpenses = Array.isArray(appState.expenses) && appState.expenses.length > 0;
     const localHasIncomes = Object.keys(appState.incomes || {}).some(k => {
@@ -534,7 +549,7 @@ async function syncOrHydrateOnLogin(user) {
       return (inc && (Number(inc.paycheck15 || 0) > 0 || Number(inc.paycheck30 || 0) > 0 || Number(inc.additional || 0) > 0));
     });
 
-    if (hasCloudData) {
+    if (cloudHasExpenses) {
       console.log('📥 Existing cloud records found. Hydrating workstation from Supabase...');
       await hydrateAppStateFromSupabase(activeWsId);
       if (typeof showToast === 'function') {

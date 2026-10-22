@@ -987,7 +987,14 @@ function getCurrentMonthKey() {
 function loadData() {
   try {
     // 1. Load global preferences & legacy fallback data from namespaced storage key if available
-    const rawGlobal = localStorage.getItem(getStorageKey());
+    let rawGlobal = localStorage.getItem(getStorageKey());
+    if (!rawGlobal && getCurrentUserUid()) {
+      const guestRaw = localStorage.getItem(STORAGE_KEY);
+      if (guestRaw) {
+        rawGlobal = guestRaw;
+        try { localStorage.setItem(getStorageKey(), guestRaw); } catch (e) {}
+      }
+    }
     if (rawGlobal) {
       const parsedGlobal = JSON.parse(rawGlobal);
       const source = (Array.isArray(parsedGlobal.savedViews) && parsedGlobal.savedViews.length > 0 && parsedGlobal.savedViews[0].expenses !== undefined)
@@ -14293,7 +14300,14 @@ function saveActiveWorkspaceContainer() {
 
 function loadWorkspaceContainer(wsId) {
   try {
-    const raw = localStorage.getItem(getWorkspaceDataPrefix() + wsId);
+    let raw = localStorage.getItem(getWorkspaceDataPrefix() + wsId);
+    if (!raw && getCurrentUserUid()) {
+      const guestRaw = localStorage.getItem(WORKSPACE_DATA_PREFIX + wsId);
+      if (guestRaw) {
+        raw = guestRaw;
+        try { localStorage.setItem(getWorkspaceDataPrefix() + wsId, guestRaw); } catch (e) {}
+      }
+    }
     if (!raw) return null;
     return JSON.parse(raw);
   } catch (e) {
@@ -14304,7 +14318,14 @@ function loadWorkspaceContainer(wsId) {
 
 function initWorkspacesEngine() {
   try {
-    const rawIndex = localStorage.getItem(getWorkspacesIndexKey());
+    let rawIndex = localStorage.getItem(getWorkspacesIndexKey());
+    if (!rawIndex && getCurrentUserUid()) {
+      const guestIndex = localStorage.getItem(WORKSPACES_INDEX_KEY);
+      if (guestIndex) {
+        rawIndex = guestIndex;
+        try { localStorage.setItem(getWorkspacesIndexKey(), guestIndex); } catch (e) {}
+      }
+    }
     if (rawIndex) {
       const parsedIndex = JSON.parse(rawIndex);
       if (parsedIndex && Array.isArray(parsedIndex.workspaces) && parsedIndex.workspaces.length > 0) {
