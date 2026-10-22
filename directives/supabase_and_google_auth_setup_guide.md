@@ -96,7 +96,23 @@ To enable Google Sign-In with your own Google account or multiple users:
 
 ---
 
-### Step 5: Pre-configured Credentials
+### Step 5: Configure Supabase URL Configuration (CRITICAL for Cloudflare & Localhost)
+By default, Supabase redirects to `http://localhost:3000`. To ensure Google Sign-In redirects back to your Cloudflare deployment and local server:
+1. In Supabase Dashboard, go to **Authentication** -> **URL Configuration**:
+   [https://supabase.com/dashboard/project/jftyzfdmlkagyhxbrqab/auth/url-configuration](https://supabase.com/dashboard/project/jftyzfdmlkagyhxbrqab/auth/url-configuration)
+2. **Site URL**:
+   Set this to your live Cloudflare deployment URL (e.g. `https://nirvtrack-2-0.pages.dev` or `https://nirvtrack-2-0.<your-subdomain>.workers.dev` or `http://localhost:7777`).
+3. **Redirect URLs**:
+   Click **Add URL** and add the following patterns (to support all local ports and Cloudflare preview branches):
+   - `http://localhost:7777/**`
+   - `http://localhost:7788/**`
+   - `https://*.pages.dev/**`
+   - `https://*.workers.dev/**`
+4. Click **Save**.
+
+---
+
+### Step 6: Pre-configured Credentials
 Your NirvTrack 2.0 instance is already pre-configured out-of-the-box with your project:
 - **Project URL**: `https://jftyzfdmlkagyhxbrqab.supabase.co`
 - **anon public API Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
