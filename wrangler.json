@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "budget-master",
+  "name": "nirvtrack-2-0",
   "main": "_worker.js",
   "compatibility_date": "2026-10-19",
   "assets": {

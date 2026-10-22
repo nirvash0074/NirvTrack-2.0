@@ -1,0 +1,19 @@
+# Cloudflare Static Asset Exclusions
+# Prevents server-side worker code, documentation, and configuration files from being served as static web assets
+
+_worker.js
+wrangler.json
+.assetsignore
+.gitignore
+.env
+.env.example
+*.md
+*.bat
+*.ps1
+execution/
+directives/
+supabase/
+scratch/
+desktop.ini
+.DS_Store
+Thumbs.db
