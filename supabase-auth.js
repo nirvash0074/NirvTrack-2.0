@@ -216,6 +216,32 @@ async function handleSupabaseAuthSuccess(rawUser, isInitialLoad = false) {
   if (!rawUser) return;
 
   const userMeta = rawUser.user_metadata || {};
+
+  // Check pending upgrade, local tier, or remote Supabase tier
+  const pendingTier = localStorage.getItem('nirvtrack_pending_tier_upgrade');
+  let currentTier = (typeof appState !== 'undefined' && appState.userTier) || localStorage.getItem('budget_master_user_tier') || 'executive';
+  let remoteTier = null;
+
+  if (window.sbClient) {
+    try {
+      const { data: dbUser } = await window.sbClient
+        .from('users')
+        .select('tier')
+        .eq('id', rawUser.id)
+        .maybeSingle();
+      if (dbUser && dbUser.tier) {
+        remoteTier = dbUser.tier;
+      }
+    } catch (e) {
+      console.warn('Notice checking remote user tier:', e);
+    }
+  }
+
+  const activeTier = pendingTier || remoteTier || currentTier || 'executive';
+  if (pendingTier) {
+    localStorage.removeItem('nirvtrack_pending_tier_upgrade');
+  }
+
   const normalizedUser = {
     id: rawUser.id,
     uid: rawUser.id,
@@ -224,7 +250,7 @@ async function handleSupabaseAuthSuccess(rawUser, isInitialLoad = false) {
     photoURL: userMeta.avatar_url || userMeta.picture || '',
     rawUser: rawUser,
     role: 'Admin',
-    tier: 'executive',
+    tier: activeTier,
     getIdToken: async () => {
       if (window.sbClient && window.sbClient.auth) {
         const { data: { session } } = await window.sbClient.auth.getSession();
@@ -236,6 +262,14 @@ async function handleSupabaseAuthSuccess(rawUser, isInitialLoad = false) {
 
   currentAuthenticatedUser = normalizedUser;
   window.currentAuthenticatedUser = normalizedUser;
+
+  // Apply tier to appState and local cache
+  if (typeof setSimulatedTier === 'function') {
+    setSimulatedTier(activeTier);
+  } else if (typeof appState !== 'undefined') {
+    appState.userTier = activeTier;
+  }
+  localStorage.setItem('budget_master_user_tier', activeTier);
 
   const prevUid = window.activeAuthUid;
   const isDifferentUser = (prevUid !== normalizedUser.id);
@@ -255,7 +289,7 @@ async function handleSupabaseAuthSuccess(rawUser, isInitialLoad = false) {
         email: normalizedUser.email,
         display_name: normalizedUser.displayName,
         photo_url: normalizedUser.photoURL,
-        tier: 'executive',
+        tier: activeTier,
         last_login_at: new Date().toISOString()
       }, { onConflict: 'id' });
     }
@@ -275,7 +309,8 @@ async function handleSupabaseAuthSuccess(rawUser, isInitialLoad = false) {
   }
 
   if (!isInitialLoad && typeof showToast === 'function') {
-    showToast(`Signed in as ${normalizedUser.displayName} (Executive Tier)`, 'success');
+    const tierDisplay = activeTier.charAt(0).toUpperCase() + activeTier.slice(1);
+    showToast(`Signed in as ${normalizedUser.displayName} (${tierDisplay} Tier)`, 'success');
   }
 
   // Trigger Database Hydration or Initial Migration

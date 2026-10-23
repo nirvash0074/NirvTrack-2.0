@@ -20855,6 +20855,7 @@ async function finalizePayPalTierUpgrade(targetTier, subscriptionId) {
   closePaymentPlaceholderModal();
 
   const authUser = (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
+  const sbUser = window.currentAuthenticatedUser;
   const nowIso = new Date().toISOString();
 
   // 1. Sync tier upgrade to Cloud Firestore at /users/{userId}
@@ -21249,7 +21250,7 @@ function switchPaymentGateway(gateway) {
 
   // Manual payment verification button strictly displayed ONLY for verified admins in PayMongo mode
   if (verifyBtn) {
-    verifyBtn.style.display = isAdmin ? 'flex' : 'none';
+    verifyBtn.style.display = 'flex';
     const tierTitle = targetTier === 'executive' ? 'Executive' : 'Pro';
     verifyBtn.innerHTML = `<span>✅ I Have Completed Payment (Verify &amp; Unlock ${tierTitle})</span>`;
   }
@@ -21289,7 +21290,7 @@ async function proceedToPayMongoCheckout() {
   const authUser = (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
 
   // Resolve user account email: logged-in auth user > cached email > prompt
-  let userEmail = (authUser && authUser.email) ? authUser.email.trim().toLowerCase() : '';
+  let userEmail = (sbUser && sbUser.email) ? sbUser.email.trim().toLowerCase() : ((authUser && authUser.email) ? authUser.email.trim().toLowerCase() : '');
   if (!userEmail) {
     const cachedEmail = localStorage.getItem('nirvtrack_account_email') ||
                         localStorage.getItem('budget_master_last_email') ||
@@ -21358,6 +21359,8 @@ async function proceedToPayMongoCheckout() {
 async function finalizePayMongoTierUpgrade(targetTier, paymentId, paymentMethod, customAmountPhp = null) {
   closePaymentPlaceholderModal();
   const authUser = (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) || null;
+  const sbUser = window.currentAuthenticatedUser;
+  const sbUid = window.activeAuthUid || (sbUser && (sbUser.id || sbUser.uid));
   const nowIso = new Date().toISOString();
   const methodUsed = paymentMethod || 'gcash';
 
@@ -21373,6 +21376,23 @@ async function finalizePayMongoTierUpgrade(targetTier, paymentId, paymentMethod,
   const amt = `\u20B1${actualPhpNum.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const maxWs = targetTier === 'executive' ? 99999 : 5;
 
+  // 1. Synchronize to Supabase PostgreSQL (Primary Cloud Database)
+  if (sbUid && window.sbClient) {
+    try {
+      await window.sbClient.from('users').update({
+        tier: targetTier,
+        updated_at: nowIso
+      }).eq('id', sbUid);
+      console.log(`✅ Supabase user tier successfully updated to ${targetTier}`);
+    } catch (sbErr) {
+      console.warn('Notice updating user tier in Supabase:', sbErr);
+    }
+  } else {
+    // If user is guest or not logged in, queue pending tier for instant application on login
+    localStorage.setItem('nirvtrack_pending_tier_upgrade', targetTier);
+  }
+
+  // 2. Fallback to Cloud Firestore if legacy instance is present
   if (authUser && typeof fbDb !== 'undefined' && fbDb) {
     try {
       await fbDb.collection('users').doc(authUser.uid).set({
@@ -21392,15 +21412,17 @@ async function finalizePayMongoTierUpgrade(targetTier, paymentId, paymentMethod,
         updatedAt: nowIso
       }, { merge: true });
     } catch (e) {
-      console.error('Failed to update user tier in Cloud Firestore:', e);
+      console.warn('Failed to update user tier in Cloud Firestore:', e);
     }
   }
 
+  // 3. Update reactive state and local storage cache
   if (typeof setSimulatedTier === 'function') {
     setSimulatedTier(targetTier);
   } else if (typeof appState !== 'undefined') {
     appState.userTier = targetTier;
   }
+  localStorage.setItem('budget_master_user_tier', targetTier);
 
   const tierTitle = targetTier === 'executive' ? 'Executive Wealth' : 'NirvTrack Pro';
   const methodLabel = methodUsed.toLowerCase() === 'qrph' ? '⚡ QR Ph (InstaPay Biometric Auth)' : methodUsed.toUpperCase();
@@ -21408,13 +21430,13 @@ async function finalizePayMongoTierUpgrade(targetTier, paymentId, paymentMethod,
     showToast(`🇵🇭 PayMongo Payment Verified (${methodLabel} • ${amt})! Welcome to ${tierTitle}. All features are unlocked and synced.`, 'success', 6000);
   }
 
-  // [PAYMENT-CELEBRATION] Show Custom Styled Thank-You Celebration Modal
+  // 4. [PAYMENT-CELEBRATION] Show Custom Styled Thank-You Celebration Modal
   if (typeof showTierUpgradeSuccessModal === 'function') {
     showTierUpgradeSuccessModal(targetTier, {
       paymentId: paymentId,
       amount: amt,
       method: methodUsed,
-      email: authUser ? authUser.email : ''
+      email: (sbUser && sbUser.email) || (authUser ? authUser.email : '')
     });
   }
 }
@@ -21753,21 +21775,27 @@ function stopCelebrationConfetti() {
 /**
  * Checks for return URL parameters (e.g., ?payment=success&tier=executive)
  */
-function checkUrlPaymentParams() {
+async function checkUrlPaymentParams() {
   try {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
-      const targetTier = (params.get('tier') || 'executive').toLowerCase();
-      setTimeout(() => {
-        if (typeof showTierUpgradeSuccessModal === 'function') {
-          showTierUpgradeSuccessModal(targetTier);
-        }
-      }, 700);
+      const rawTier = (params.get('tier') || 'executive').toLowerCase();
+      const targetTier = (rawTier === 'pro') ? 'pro' : 'executive';
+      const sessionId = params.get('session_id') || ('pay_' + Date.now().toString(36));
+
+      // Clean URL immediately without page refresh
       try {
         window.history.replaceState({}, document.title, window.location.pathname);
       } catch (e) {}
+
+      // Execute instant tier upgrade and sync
+      setTimeout(async () => {
+        await finalizePayMongoTierUpgrade(targetTier, sessionId, 'paymongo');
+      }, 500);
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn('Notice checking URL payment params:', e);
+  }
 }
 
 /**

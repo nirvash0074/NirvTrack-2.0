@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover, interactive-widget=resizes-content">
-  <title>NirvTrack v2.0.20261023.107 - Monthly Budget &amp; Expense Tracker</title>
+  <title>NirvTrack v2.0.20261023.108 - Monthly Budget &amp; Expense Tracker</title>
   <meta name="description" content="A modern, Power BI-inspired personal finance web application to track monthly expenses, allocate budgets by category, and monitor financial health.">
   <link rel="canonical" href="https://app.nirvtrack.com/">
   
@@ -49,7 +49,7 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20261023_v107_supabase_sync">
+  <link rel="stylesheet" href="styles.css?v=20261023_v108_paymongo_sync">
 </head>
 <body class="theme-aurora tier-style-executive" data-theme="aurora" data-tier="executive" data-user-tier="executive">
   <!-- App Container -->
@@ -74,7 +74,7 @@
           <div class="brand-title-row">
             <h2 class="nirv-official-wordmark"><span class="nirv-wm-nirv">Nirv</span><span class="nirv-wm-track">Track</span></h2>
             <span class="badge-pro brand-tier-badge badge-tier-free" id="brandTierBadge" role="button" tabindex="0" onclick="if (typeof openUpgradeModal === 'function') { openUpgradeModal('pro'); } else if (typeof showUpgradePrompt === 'function') { showUpgradePrompt('[FEAT-38]', 'Plan & Feature Tiers'); }">🌱 CORE</span>
-            <span class="brand-patch-badge" id="brandPatchBadge" style="display: none;" title="Latest Version (Click to view Patch Notes)" onclick="if (typeof openPatchNotesModal === 'function') openPatchNotesModal();">v2.0.20261023.107</span>
+            <span class="brand-patch-badge" id="brandPatchBadge" style="display: none;" title="Latest Version (Click to view Patch Notes)" onclick="if (typeof openPatchNotesModal === 'function') openPatchNotesModal();">v2.0.20261023.108</span>
           </div>
         </div>
         <button type="button" class="btn-sidebar-pin-toggle" id="btnSidebarPinToggle" title="Unpin &amp; Collapse Sidebar Left ( [ )" aria-label="Toggle Sidebar Pin" onclick="if (typeof toggleSidebarPin === 'function') toggleSidebarPin(event);">
@@ -4406,6 +4406,32 @@
       </div>
 
       <div class="faq-accordion-list" id="faqAccordionList">
+
+        <!-- FAQ Item: [FEAT-PAYMONGO-PIPELINE-V108] Instant PayMongo Subscription & Cloud Tier Unlock -->
+        <div class="faq-item" data-category="cloud budget workspaces" data-keywords="paymongo gcash maya qrph checkout subscription instant tier upgrade return url verify unlock">
+          <button class="faq-question-btn" type="button">
+            <span class="faq-q-text"><span class="faq-badge-tag">FEAT-65</span><span class="faq-badge-tag">FEAT-108</span> How does NirvTrack's PayMongo Subscription &amp; Instant Tier Unlock work?</span>
+            <span class="faq-q-icon">▾</span>
+          </button>
+          <div class="faq-answer">
+            <p><strong>NirvTrack v2.0.20261023.108</strong> features a bulletproof triple-pipeline for PayMongo subscriptions (GCash, Maya, QR Ph, BDO/BPI Cards):</p>
+            <div class="faq-preview-card" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 700; color: #10b981; font-size: 0.85rem;">1. Edge Webhook</div>
+                <p style="font-size: 0.74rem; color: var(--text-secondary); margin: 4px 0 0;">Cloudflare Worker endpoint (<code>/api/paymongo-webhook</code>) receives real-time payment events and immediately syncs the tier to Supabase PostgreSQL.</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 700; color: #06b6d4; font-size: 0.85rem;">2. Auto Return URL Unlock</div>
+                <p style="font-size: 0.74rem; color: var(--text-secondary); margin: 4px 0 0;">When redirected back with <code>?payment=success&amp;tier=...</code>, NirvTrack automatically activates your plan and launches celebration confetti.</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 700; color: #f59e0b; font-size: 0.85rem;">3. Instant Manual Unlock</div>
+                <p style="font-size: 0.74rem; color: var(--text-secondary); margin: 4px 0 0;">Clicking "✅ I Have Completed Payment (Verify &amp; Unlock)" in the payment modal immediately activates your plan without waiting.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- [FEAT-61] Dynamic Empty Search Prompt to Ask AI instead -->
         <div id="faqNoMatchAiPrompt" style="display: none; padding: 18px; text-align: center; background: rgba(6, 182, 212, 0.06); border: 1px dashed rgba(6, 182, 212, 0.35); border-radius: var(--radius-md); margin-bottom: 12px;">
           <div style="font-size: 1.5rem; margin-bottom: 6px;">🤖</div>
@@ -9001,7 +9027,7 @@ GrabFood order for PHP 380.00 completed on 2026-10-16."></textarea>
             <span>🇵🇭 Pay with QR Ph / GCash / Maya</span> <span id="paymongoBtnPriceTag" style="opacity: 0.9;">(₱199)</span>
           </button>
           <!-- Manual Payment Verification Button (Strictly displayed ONLY for verified Admins) -->
-          <button type="button" class="btn btn-secondary btn-block" id="btnVerifyPayMongoPayment" onclick="verifyPayMongoPayment()" style="display: none; margin-top: 8px; border-color: rgba(52, 211, 153, 0.5); color: #34d399; background: rgba(16, 185, 129, 0.15); font-weight: 600; font-size: 0.84rem; align-items: center; justify-content: center; gap: 6px;">
+          <button type="button" class="btn btn-secondary btn-block" id="btnVerifyPayMongoPayment" onclick="verifyPayMongoPayment()" style="display: flex; margin-top: 8px; border-color: rgba(52, 211, 153, 0.5); color: #34d399; background: rgba(16, 185, 129, 0.15); font-weight: 600; font-size: 0.84rem; align-items: center; justify-content: center; gap: 6px;">
             <span id="btnVerifyPayMongoPaymentText">✅ I Have Completed Payment (Verify &amp; Unlock Plan)</span>
           </button>
         </div>
@@ -9378,8 +9404,8 @@ GrabFood order for PHP 380.00 completed on 2026-10-16."></textarea>
 
   <!-- [FEAT-SUPABASE] Enterprise PostgreSQL Database & Google OAuth Engine -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-auth.js?v=20261023_v107_supabase_sync"></script>
-  <script src="supabase-db.js?v=20261023_v107_supabase_sync"></script>
+  <script src="supabase-auth.js?v=20261023_v108_paymongo_sync"></script>
+  <script src="supabase-db.js?v=20261023_v108_paymongo_sync"></script>
   <!--
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-auth.js"></script>
@@ -9390,12 +9416,12 @@ GrabFood order for PHP 380.00 completed on 2026-10-16."></textarea>
   <!-- <script src="https://www.paypal.com/sdk/js?client-id=BAAQOkcu3dYzrL__mSmk_CBX24JIpFz7QUU8O7Cqkt6Ub8Lq7IkdFbJVT97xctAQWLx5IVFX1AZvmMr5Nc&vault=true&intent=subscription&currency=USD" id="paypalSdkScript"></script> -->
 
   <!-- [FEAT-MODULAR-DOMAIN] Patch Notes & Version Registry Domain Store -->
-  <script src="patch-notes-data.js?v=20261023_v107_supabase_sync"></script>
+  <script src="patch-notes-data.js?v=20261023_v108_paymongo_sync"></script>
 
   <!-- App Core Script -->
-  <script src="app.js?v=20261023_v107_supabase_sync"></script>
+  <script src="app.js?v=20261023_v108_paymongo_sync"></script>
 
   <!-- [FEAT-MODULAR-DOMAIN] NirvTrack AI Copilot & Automation Engine -->
-  <script src="ai-copilot-engine.js?v=20261023_v107_supabase_sync"></script>
+  <script src="ai-copilot-engine.js?v=20261023_v108_paymongo_sync"></script>
 </body>
 </html>

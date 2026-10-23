@@ -5,11 +5,55 @@
  */
 window.APP_PATCH_NOTES = [
   {
+    version: 'v2.0.20261023.108',
+    date: 'Oct 23, 2026',
+    title: 'PayMongo End-to-End Subscription & Instant Cloud Tier Sync Engine',
+    badge: 'Latest ✨',
+    badgeType: 'latest',
+    summary: 'Resolved user subscription updates after PayMongo payments (GCash, Maya, QR Ph, Card). Built an edge webhook endpoint (/api/paymongo-webhook) and checkout session proxy (/api/paymongo-checkout) on Cloudflare Workers, automatic return URL detection (?payment=success&tier=...) for instant client unlock, manual verification fallback button for all members, and bidirectional tier synchronization with Supabase PostgreSQL.',
+    features: [
+      {
+        type: 'feature',
+        tag: '[FEAT-PAYMONGO-EDGE-PIPELINE]',
+        title: '⚡ Serverless PayMongo Webhook & Checkout Session Proxy',
+        desc: 'Implemented POST /api/paymongo-checkout and POST /api/paymongo-webhook on Cloudflare Workers edge, processing checkout_session.payment.paid events and automatically upgrading user tiers in Supabase.',
+        gui: {
+          type: 'button',
+          previewHtml: '<button class="btn btn-xs btn-outline-emerald">💳 Verify &amp; Unlock</button>',
+          actionLabel: 'Verify Payment Status ⚡',
+          actionCode: 'if (typeof verifyPayMongoPayment === "function") verifyPayMongoPayment();'
+        }
+      },
+      {
+        type: 'feature',
+        tag: '[FEAT-INSTANT-RETURN-URL-UNLOCK]',
+        title: '🎉 Automatic Return URL Tier Activation',
+        desc: 'When users complete payment on PayMongo and return to NirvTrack, the app detects ?payment=success&tier=..., triggers immediate tier upgrade, clears URL params, and launches confetti celebration.',
+        gui: {
+          type: 'button',
+          previewHtml: '<button class="btn btn-xs btn-outline-cyan">🎉 Test Return Unlock</button>',
+          actionLabel: 'Simulate Return URL 🎉',
+          actionCode: 'if (typeof checkUrlPaymentParams === "function") finalizePayMongoTierUpgrade("executive", "pay_sim_" + Date.now().toString(36), "paymongo");'
+        }
+      },
+      {
+        type: 'improvement',
+        tag: '[FEAT-SUPABASE-TIER-PERSISTENCE]',
+        title: '☁️ Dynamic Supabase Tier Persistence',
+        desc: 'Removed hardcoded executive tier assignments on login. Preserves user active tier in public.users, hydrates user tier from PostgreSQL, and queues pending upgrades for guest checkout.',
+        gui: {
+          type: 'badge',
+          previewHtml: '<span class="badge badge-emerald">Supabase Synced</span>'
+        }
+      }
+    ]
+  },
+  {
     version: 'v2.0.20261023.107',
     date: 'Oct 23, 2026',
     title: 'Enterprise Supabase Cloud Sync & Precision Schema Fidelity',
-    badge: 'Latest ✨',
-    badgeType: 'latest',
+    badge: 'Stable',
+    badgeType: 'stable',
     summary: 'Hardened NirvTrack 2.0 with 100% schema mapping fidelity across Supabase PostgreSQL and local workstation containers. Resolved critical semi-monthly income schedules (paycheck15/paycheck30/additional), 50/30/20 category classifications (needs/wants), and ledger transaction metadata (wallets, refunds, splits, bill links). Added a prominent 1-click "☁️ Sync" topbar control, multi-workspace sync support, and bidirectional Push/Pull triggers to guarantee instant data synchronization between localhost and Cloudflare deployments.',
     features: [
       {

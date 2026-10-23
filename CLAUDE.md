@@ -50,6 +50,7 @@ Always refer to the specialized skill corresponding to the aspect of NirvTrack b
 | **`nirvtrack-feature-auditor-tester`** | Comprehensive feature auditor: coordinates multi-skill regression testing, automated test execution via `execution/run_full_audit.js`, DOM bindings, and arithmetic validation. |
 | **`nirvtrack-testing-qa-guardian`** | Quality assurance & regression prevention: Mandatory Gate 1 (Pre-implementation feasibility) and Gate 2 (Post-implementation regression audit), arithmetic sanity checks, and local server smoke testing. |
 | **`nirvtrack-release-chronicler`** | Release management & documentation: Mandatory 4-step pipeline updating `APP_PATCH_NOTES` in `app.js` with interactive GUI playground, synchronizing `#faqAccordionList` in `index.html`, and incrementing version cache busters. |
+| **`nirvtrack-paymongo-subscription-pipeline`** | End-to-end payment & tier fulfillment: Cloudflare Worker edge webhook (`/api/paymongo-webhook`), edge checkout session proxy (`/api/paymongo-checkout`), client redirect return URL auto-unlock (`?payment=success`), manual verification fallback, and Supabase `public.users` tier synchronization. |
 
 ---
 

@@ -762,6 +762,26 @@ async function hydrateAppStateFromSupabase(workspaceId) {
       console.warn('Savings goals hydration notice:', gErr);
     }
 
+        // 8. Fetch user tier from public.users
+    try {
+      const { data: userProfile } = await client
+        .from('users')
+        .select('tier')
+        .eq('id', uid)
+        .maybeSingle();
+
+      if (userProfile && userProfile.tier) {
+        if (typeof setSimulatedTier === 'function') {
+          setSimulatedTier(userProfile.tier);
+        } else {
+          appState.userTier = userProfile.tier;
+          localStorage.setItem('budget_master_user_tier', userProfile.tier);
+        }
+      }
+    } catch (uErr) {
+      console.warn('User tier hydration notice:', uErr);
+    }
+
     hasSupabaseHydrated = true;
     window.hasSupabaseHydrated = true;
 
